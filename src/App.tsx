@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -8,17 +8,10 @@ import AllTickersData from './pages/AllTickersData';
 import RealtimeData from './pages/RealtimeData';
 import SpecificDate from './pages/SpecificDate';
 import BigQueryData from './pages/BigQueryData';
-// import { apiFetch } from './utils/api'
+import AnalyticsData from './pages/AnalyticsData';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [data, setData] = useState(null);
-
-  // useEffect(()=>{
-  //   const res = apiFetch('')
-
-  // })
-
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
@@ -36,6 +29,7 @@ function App() {
                 <Route path="/realtime" element={<RealtimeData />} />
                 <Route path="/specific-date" element={<SpecificDate />} />
                 <Route path="/bigquery" element={<BigQueryData />} />
+                <Route path='/analytics' element={<AnalyticsData />} />
               </Routes>
             </div>
           </main>

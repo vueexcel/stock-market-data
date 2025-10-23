@@ -9,6 +9,7 @@ const navigationItems = [
   { name: 'Realtime Data', href: '/realtime', icon: Clock },
   { name: 'Specific Date', href: '/specific-date', icon: BarChart3 },
   { name: 'BigQuery Data', href: '/bigquery', icon: Database },
+  { name: 'Analytics Data', href: '/analytics', icon: BarChart3 },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) => {

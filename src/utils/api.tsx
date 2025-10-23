@@ -17,6 +17,7 @@ export async function apiFetch<T = any>(
     const res = await apiClient.request<T>({
       url: endpoint.replace(/^\//, ""), // Remove leading slash
       ...options,
+      withCredentials: options?.withCredentials ?? true,
     });
     return res.data;
   } catch (error: any) {
