@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BarChart3, Clock, Database, Download, History, Home, X, TrendingUp } from 'lucide-react';
+import { BarChart3, Clock, Database, Download, History, Hourglass,Home, X, TrendingUp } from 'lucide-react';
+import HistoricData from '../pages/HistoricData';
 
 const navigationItems = [
   { name: 'Dashboard', href: '/', icon: Home },
@@ -10,6 +11,7 @@ const navigationItems = [
   { name: 'Specific Date', href: '/specific-date', icon: BarChart3 },
   { name: 'BigQuery Data', href: '/bigquery', icon: Database },
   { name: 'Analytics Data', href: '/analytics', icon: BarChart3 },
+  { name: 'Historic Data', href: '/historic', icon:Hourglass  },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) => {

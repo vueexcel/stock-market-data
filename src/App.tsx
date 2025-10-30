@@ -9,6 +9,7 @@ import RealtimeData from './pages/RealtimeData';
 import SpecificDate from './pages/SpecificDate';
 import BigQueryData from './pages/BigQueryData';
 import AnalyticsData from './pages/AnalyticsData';
+import HistoricData from './pages/HistoricData';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,6 +31,8 @@ function App() {
                 <Route path="/specific-date" element={<SpecificDate />} />
                 <Route path="/bigquery" element={<BigQueryData />} />
                 <Route path='/analytics' element={<AnalyticsData />} />
+                {/* me */}
+                <Route path='/historic' element={<HistoricData/>} />
               </Routes>
             </div>
           </main>
