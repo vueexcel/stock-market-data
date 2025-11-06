@@ -103,6 +103,7 @@ interface MonthlyOHLC {
   high: number;
   low: number;
   close: number;
+  adj_close: number;
   ticker: string;
   start_date: string;
   end_date: string;
@@ -161,6 +162,7 @@ const HistoricData = () => {
                 <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">High</th>
                 <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">Low</th>
                 <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">Close</th>
+                <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">Adj Close</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -173,6 +175,7 @@ const HistoricData = () => {
                   <td className="p-4 text-sm text-right font-mono text-green-600">{row.high.toFixed(2)}</td>
                   <td className="p-4 text-sm text-right font-mono text-red-600">{row.low.toFixed(2)}</td>
                   <td className="p-4 text-sm text-right font-mono text-blue-600">{row.close.toFixed(2)}</td>
+                  <td className="p-4 text-sm text-right font-mono text-purple-600">{row.adj_close.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

@@ -10,6 +10,7 @@ import SpecificDate from './pages/SpecificDate';
 import BigQueryData from './pages/BigQueryData';
 import AnalyticsData from './pages/AnalyticsData';
 import HistoricData from './pages/HistoricData';
+import PerformanceReturn from './pages/PerformanceReturn';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,6 +34,7 @@ function App() {
                 <Route path='/analytics' element={<AnalyticsData />} />
                 {/* me */}
                 <Route path='/historic' element={<HistoricData/>} />
+                <Route path='/performance-return' element={<PerformanceReturn />} />
               </Routes>
             </div>
           </main>
