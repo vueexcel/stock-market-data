@@ -50,20 +50,18 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
       <button
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`w-full p-2 text-left bg-white border border-slate-300 rounded-md shadow-sm flex justify-between items-center ${
-          disabled
+        className={`w-full p-2 text-left bg-white border border-slate-300 rounded-md shadow-sm flex justify-between items-center ${disabled
             ? 'bg-slate-50 cursor-not-allowed'
             : 'focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
-        }`}
+          }`}
         disabled={disabled}
       >
         <span className={value ? 'text-slate-900' : 'text-slate-400'}>
           {value || placeholder}
         </span>
         <ChevronDown
-          className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
+            }`}
         />
       </button>
 
@@ -120,6 +118,9 @@ interface PerformanceGroups {
   predefinedPeriods: PerformanceRow[];
   annualReturns: PerformanceRow[];
   customRange?: PerformanceRow[];
+  //  ms. additional groups can be added here
+  quarterlyReturns?: PerformanceRow[];
+  monthlyReturns?: PerformanceRow[];
 }
 const chartData = [
   { name: '18 Oct', 'Credit Debit Card': 20000, 'Bank Amount': 41000 },
@@ -216,16 +217,14 @@ const AnalyticsData = () => {
                   <td className="p-4 text-sm text-right text-slate-600 font-mono">{row.startPrice?.toLocaleString()}</td>
                   <td className="p-4 text-sm text-right text-slate-600 font-mono">{row.endPrice?.toLocaleString()}</td>
                   <td
-                    className={`p-4 text-sm text-right font-mono ${
-                      row.priceDifference >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}
+                    className={`p-4 text-sm text-right font-mono ${row.priceDifference >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}
                   >
                     {row.priceDifference?.toLocaleString()}
                   </td>
                   <td
-                    className={`p-4 text-sm text-right font-semibold ${
-                      row.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}
+                    className={`p-4 text-sm text-right font-semibold ${row.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}
                   >
                     {row.totalReturn?.toFixed(2)}%
                   </td>
@@ -315,51 +314,12 @@ const AnalyticsData = () => {
             {renderTable('Dynamic Periods', performanceData.dynamicPeriods)}
             {renderTable('Predefined Periods', performanceData.predefinedPeriods)}
             {renderTable('Annual Returns', performanceData.annualReturns)}
+            {performanceData.quarterlyReturns && renderTable('Quarterly Returns', performanceData.quarterlyReturns)}
+            {performanceData.monthlyReturns && renderTable('Monthly Returns', performanceData.monthlyReturns)}
             {performanceData.customRange && performanceData.customRange.length > 0 && renderTable('Selected Period', performanceData.customRange)}
-          </div>
+             </div>
         )}
-        {/* {!isLoading && (
-          <div className="border-t border-slate-200 mt-6">
-            <div className="flex justify-between items-center p-4 bg-slate-50 border-b border-slate-200">
-              <div className="flex items-center gap-3">
-                <LineChart className="h-5 w-5 text-indigo-600" />
-                <h3 className="text-md font-semibold text-slate-800">Monthly Volume</h3>
-              </div>
-            </div>
-            <div className="p-5 h-[350px] bg-white">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsLineChart
-                  data={chartData}
-                  margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-                  <YAxis
-                    stroke="#64748b"
-                    fontSize={12}
-                    tickFormatter={value => `$${value / 1000}K`}
-                  />
-                  <Tooltip />
-                  <Legend wrapperStyle={{ fontSize: '14px' }} />
-                  <Line
-                    type="monotone"
-                    dataKey="Credit Debit Card"
-                    stroke="#4f46e5"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="Bank Amount"
-                    stroke="#10b981"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
-                </RechartsLineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )} */}
+     
       </div>
     </div>
   );
