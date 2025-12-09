@@ -15,6 +15,7 @@ interface TickerDetail {
   industry: string;
   index: string;
   totalReturnPercentage: number | null;
+  price: number | null; 
 }
 
 const PerformanceReturn = () => {
@@ -166,106 +167,107 @@ const PerformanceReturn = () => {
           </div>
         </div>
       )}
+       {tickerData.length > 0 && (() => {
+  // Group data by Sector and Industry
+  const grouped: {
+    [sector: string]: { [industry: string]: TickerDetail[] }
+  } = {};
 
-      {tickerData.length > 0 && (() => {
-        // Group data by Sector and then by Industry
-        const groupedData: { [sector: string]: { [industry: string]: TickerDetail[] } } = {};
-        
-        tickerData.forEach((ticker) => {
-          const sector = ticker.sector || 'Unknown';
-          const industry = ticker.industry || 'Unknown';
-          
-          if (!groupedData[sector]) {
-            groupedData[sector] = {};
-          }
-          if (!groupedData[sector][industry]) {
-            groupedData[sector][industry] = [];
-          }
-          groupedData[sector][industry].push(ticker);
-        });
+  tickerData.forEach((item) => {
+    const sector = item.sector || "Unknown";
+    const industry = item.industry || "Unknown";
 
-        // Sort sectors and industries alphabetically
-        const sortedSectors = Object.keys(groupedData).sort();
-        
+    if (!grouped[sector]) grouped[sector] = {};
+    if (!grouped[sector][industry]) grouped[sector][industry] = [];
+    grouped[sector][industry].push(item);
+  });
+
+  const sectors = Object.keys(grouped);
+
+  return (
+    <div className="space-y-10">
+        {/* SELECTED INDEX HEADER */}
+    <div className="bg-blue-100 px-4 py-3 rounded border border-blue-300">
+      <h2 className="text-xl font-bold text-gray-900">
+        Index — {indexOptions.find(i => i.value === selectedIndex)?.label || selectedIndex}
+      </h2>
+    </div>
+      {sectors.map((sector) => {
+        const industries = Object.keys(grouped[sector]);
+
         return (
-          <div className="space-y-8">
-            {sortedSectors.map((sector) => {
-              const industries = Object.keys(groupedData[sector]).sort();
-              
-              return (
-                <div key={sector} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                  <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                    <h2 className="text-lg font-semibold text-gray-900">{sector}</h2>
-                  </div>
-                  
-                  <div className="space-y-6 p-6">
-                    {industries.map((industry) => {
-                      const tickers = groupedData[sector][industry];
-                      
-                      return (
-                        <div key={`${sector}-${industry}`} className="space-y-3">
-                          <h3 className="text-md font-medium text-gray-800">{industry}</h3>
-                          <div className="overflow-x-auto">
-                          <table className="min-w-full table-fixed divide-y divide-gray-200">
-                              <thead className="bg-gray-50">
-                                <tr>
-                                  <th className="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Symbol
-                                  </th>
-                                  <th className="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Company
-                                  </th>
-                                  <th className="w-1/4 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Index
-                                  </th>
-                                  <th className="w-1/4 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Total Return (%)
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody className="bg-white divide-y divide-gray-200">
-                                {tickers.map((ticker) => (
-                                  <tr key={ticker.row} className="hover:bg-gray-50">
-                                    <td className="w-1/4 px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-left">
-                                      {ticker.symbol}
-                                    </td>
-                                    <td className="w-1/4 px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-left">
-                                      {ticker.security}
-                                    </td>
-                                    <td className="w-1/4 px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                                      {ticker.index}
-                                    </td>
-                                    <td
-                                      className={`w-1/4 px-6 py-4 whitespace-nowrap text-sm text-right font-medium ${
-                                        ticker.totalReturnPercentage !== null &&
-                                        ticker.totalReturnPercentage !== undefined
-                                          ? ticker.totalReturnPercentage >= 0
-                                            ? 'text-green-600'
-                                            : 'text-red-600'
-                                          : 'text-gray-400'
-                                      }`}
-                                    >
-                                      {ticker.totalReturnPercentage !== null &&
-                                      ticker.totalReturnPercentage !== undefined
-                                        ? `${ticker.totalReturnPercentage >= 0 ? '+' : ''}${ticker.totalReturnPercentage.toFixed(2)}%`
-                                        : 'N/A'}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
+          <div key={sector} className="border rounded-lg overflow-hidden">
+            {/* SECTOR HEADER (BLUE STRIP LIKE IMAGE) */}
+            <div className="bg-blue-100 px-4 py-3 border-b border-gray-300">
+              <h2 className="text-lg font-semibold text-gray-900 uppercase tracking-wide">
+                Sector — {sector}
+              </h2>
+            </div>
 
-                            </table>
-                          </div>
-                        </div>
-                      );
-                    })}
+            {/* INDUSTRIES */}
+            {industries.map((industry) => {
+              const list = grouped[sector][industry];
+
+              return (
+                <div key={industry} className="border-b">
+                  {/* INDUSTRY HEADER (GRAY STRIP LIKE IMAGE) */}
+                  <div className="bg-gray-100 px-4 py-2 border-b">
+                    <h3 className="text-md font-medium text-gray-800">
+                    Industry - {industry}
+                    </h3>
                   </div>
+
+                  {/* TABLE */}
+                  <table className="min-w-full">
+                    <thead className="bg-blue-900 border-b">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">#</th>
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">Ticker</th>
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">Name</th>
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">Sector</th>
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">Industry</th>
+                        <th className="px-4 py-2 text-right text-xs font-semibold text-white">Price</th>
+                        <th className="px-4 py-2 text-right text-xs font-semibold text-white">%</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {list.map((row, index) => (
+                        <tr key={row.row} className="border-t hover:bg-gray-50">
+                          <td className="px-4 py-2 text-sm">{index + 1}</td>
+                          <td className="px-4 py-2 text-sm font-medium">{row.symbol}</td>
+                          <td className="px-4 py-2 text-sm">{row.security}</td>
+                          <td className="px-4 py-2 text-sm">{row.sector}</td>
+                          <td className="px-4 py-2 text-sm">{row.industry}</td>
+                          <td className="px-4 py-2 text-sm text-right">{row.price}</td>
+
+                          <td
+                            className={`px-4 py-2 text-sm text-right font-semibold ${
+                              row.totalReturnPercentage !== null && row.totalReturnPercentage >= 0
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {row.totalReturnPercentage !== null
+                              ? `${row.totalReturnPercentage.toFixed(2)}%`
+                              : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               );
             })}
           </div>
         );
-      })()}
+      })}
+    </div>
+  );
+})()}
+
+   
+ 
     </div>
   );
 };

@@ -184,13 +184,80 @@ const AnalyticsData = () => {
     setSelectedTicker(ticker);
     fetchPerformanceData(ticker);
   };
-  const renderTable = (title: string, data: PerformanceRow[]) => (
+  // const renderTable = (title: string, data: PerformanceRow[]) => (
+  //   <div key={title} className="border border-slate-200 rounded-lg overflow-hidden">
+  //     <div className="flex items-center gap-3 p-4 bg-slate-50 border-b border-slate-200">
+  //       <TrendingUp className="h-5 w-5 text-indigo-600" />
+  //       <h3 className="text-md font-semibold text-slate-800">{title}</h3>
+  //     </div>
+  //     {data && data.length > 0 ? (
+  //       <div className="overflow-x-auto">
+  //         <table className="w-full">
+  //           <thead className="bg-slate-50">
+  //             <tr>
+  //               <th className="p-4 text-left text-xs font-semibold text-slate-500 uppercase">Period</th>
+  //               <th className="p-4 text-left text-xs font-semibold text-slate-500 uppercase">Start Date</th>
+  //               <th className="p-4 text-left text-xs font-semibold text-slate-500 uppercase">End Date</th>
+  //               <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">Years</th>
+  //               <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">Start Price</th>
+  //               <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">End Price</th>
+  //               <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">Price Diff</th>
+  //               <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">Total Return (%)</th>
+  //               <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">Simple Annual (%)</th>
+  //               <th className="p-4 text-right text-xs font-semibold text-slate-500 uppercase">CAGR (%)</th>
+  //             </tr>
+  //           </thead>
+  //           <tbody className="divide-y divide-slate-200">
+  //             {data.map((row) => (
+  //               <tr key={row.period} className="hover:bg-slate-50">
+  //                 <td className="p-4 text-sm font-semibold text-slate-900">{row.period}</td>
+  //                 <td className="p-4 text-sm text-slate-600">{row.startDate}</td>
+  //                 <td className="p-4 text-sm text-slate-600">{row.endDate}</td>
+  //                 <td className="p-4 text-sm text-right text-slate-600 font-mono">{row.years?.toFixed(1)}</td>
+  //                 <td className="p-4 text-sm text-right text-slate-600 font-mono">{row.startPrice?.toLocaleString()}</td>
+  //                 <td className="p-4 text-sm text-right text-slate-600 font-mono">{row.endPrice?.toLocaleString()}</td>
+  //                 <td
+  //                   className={`p-4 text-sm text-right font-mono ${row.priceDifference >= 0 ? 'text-green-600' : 'text-red-600'
+  //                     }`}
+  //                 >
+  //                   {row.priceDifference?.toLocaleString()}
+  //                 </td>
+  //                 <td
+  //                   className={`p-4 text-sm text-right font-semibold ${row.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'
+  //                     }`}
+  //                 >
+  //                   {row.totalReturn?.toFixed(2)}%
+  //                 </td>
+  //                 <td className="p-4 text-sm text-right font-mono text-blue-600">
+  //                   {row.simpleAnnualReturn?.toFixed(2)}%
+  //                 </td>
+  //                 <td className="p-4 text-sm text-right font-mono text-indigo-600">
+  //                   {row.cagrPercent?.toFixed(2)}%
+  //                 </td>
+  //               </tr>
+  //             ))}
+  //           </tbody>
+  //         </table>
+  //       </div>
+  //     ) : (
+  //       <div className="p-4 text-sm text-center text-slate-500">
+  //         No data available for this section.
+  //       </div>
+  //     )}
+  //   </div>
+  // );
+
+const renderTable = (title: string, data: PerformanceRow[]) => {
+  // Sort descending by endDate (newest first)
+  const sortedData = [...data].sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+
+  return (
     <div key={title} className="border border-slate-200 rounded-lg overflow-hidden">
       <div className="flex items-center gap-3 p-4 bg-slate-50 border-b border-slate-200">
         <TrendingUp className="h-5 w-5 text-indigo-600" />
         <h3 className="text-md font-semibold text-slate-800">{title}</h3>
       </div>
-      {data && data.length > 0 ? (
+      {sortedData && sortedData.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-slate-50">
@@ -208,7 +275,7 @@ const AnalyticsData = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {data.map((row) => (
+              {sortedData.map((row) => (
                 <tr key={row.period} className="hover:bg-slate-50">
                   <td className="p-4 text-sm font-semibold text-slate-900">{row.period}</td>
                   <td className="p-4 text-sm text-slate-600">{row.startDate}</td>
@@ -246,7 +313,9 @@ const AnalyticsData = () => {
       )}
     </div>
   );
+};
 
+  
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-4">
