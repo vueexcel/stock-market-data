@@ -110,6 +110,43 @@ const PerformanceReturn = () => {
     }
   };
 
+  // EXPORT FUNCTIONS
+const exportCSV = () => {
+  if (!tickerData.length) return;
+
+  const headers = ["Row", "Ticker", "Name", "Sector", "Industry", "Price", "Return%"];
+  const rows = tickerData.map((d, idx) => [
+    idx + 1,
+    d.symbol,
+    d.security,
+    d.sector,
+    d.industry,
+    d.price ?? "",
+    d.totalReturnPercentage ?? ""
+  ]);
+
+  let csvContent =
+    "data:text/csv;charset=utf-8," +
+    [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+
+  const link = document.createElement("a");
+  link.href = encodeURI(csvContent);
+  link.download = `heatmap_${selectedIndex}_${selectedPeriod}.csv`;
+  link.click();
+};
+
+
+const groupedAndSorted = [...tickerData].sort((a, b) => {
+  if (a.sector < b.sector) return -1;
+  if (a.sector > b.sector) return 1;
+
+  if (a.industry < b.industry) return -1;
+  if (a.industry > b.industry) return 1;
+
+  return 0;
+});
+
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -167,107 +204,82 @@ const PerformanceReturn = () => {
           </div>
         </div>
       )}
-       {tickerData.length > 0 && (() => {
-  // Group data by Sector and Industry
-  const grouped: {
-    [sector: string]: { [industry: string]: TickerDetail[] }
-  } = {};
+      {tickerData.length > 0 && (
+        <div className="mt-6">
+          {/* HEADER + EXPORT BUTTON */}
+          <div className="bg-blue-100 px-4 py-3 rounded border flex justify-between">
+            <h2 className="text-xl font-bold text-gray-900">
+              Index — {indexOptions.find(i => i.value === selectedIndex)?.label}
+            </h2>
 
-  tickerData.forEach((item) => {
-    const sector = item.sector || "Unknown";
-    const industry = item.industry || "Unknown";
-
-    if (!grouped[sector]) grouped[sector] = {};
-    if (!grouped[sector][industry]) grouped[sector][industry] = [];
-    grouped[sector][industry].push(item);
-  });
-
-  const sectors = Object.keys(grouped);
-
-  return (
-    <div className="space-y-10">
-        {/* SELECTED INDEX HEADER */}
-    <div className="bg-blue-100 px-4 py-3 rounded border border-blue-300">
-      <h2 className="text-xl font-bold text-gray-900">
-        Index — {indexOptions.find(i => i.value === selectedIndex)?.label || selectedIndex}
-      </h2>
-    </div>
-      {sectors.map((sector) => {
-        const industries = Object.keys(grouped[sector]);
-
-        return (
-          <div key={sector} className="border rounded-lg overflow-hidden">
-            {/* SECTOR HEADER (BLUE STRIP LIKE IMAGE) */}
-            <div className="bg-blue-100 px-4 py-3 border-b border-gray-300">
-              <h2 className="text-lg font-semibold text-gray-900 uppercase tracking-wide">
-                Sector — {sector}
-              </h2>
-            </div>
-
-            {/* INDUSTRIES */}
-            {industries.map((industry) => {
-              const list = grouped[sector][industry];
-
-              return (
-                <div key={industry} className="border-b">
-                  {/* INDUSTRY HEADER (GRAY STRIP LIKE IMAGE) */}
-                  <div className="bg-gray-100 px-4 py-2 border-b">
-                    <h3 className="text-md font-medium text-gray-800">
-                    Industry - {industry}
-                    </h3>
-                  </div>
-
-                  {/* TABLE */}
-                  <table className="min-w-full">
-                    <thead className="bg-blue-900 border-b">
-                      <tr>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">#</th>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">Ticker</th>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">Name</th>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">Sector</th>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-white">Industry</th>
-                        <th className="px-4 py-2 text-right text-xs font-semibold text-white">Price</th>
-                        <th className="px-4 py-2 text-right text-xs font-semibold text-white">%</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {list.map((row, index) => (
-                        <tr key={row.row} className="border-t hover:bg-gray-50">
-                          <td className="px-4 py-2 text-sm">{index + 1}</td>
-                          <td className="px-4 py-2 text-sm font-medium">{row.symbol}</td>
-                          <td className="px-4 py-2 text-sm">{row.security}</td>
-                          <td className="px-4 py-2 text-sm">{row.sector}</td>
-                          <td className="px-4 py-2 text-sm">{row.industry}</td>
-                          <td className="px-4 py-2 text-sm text-right">{row.price}</td>
-
-                          <td
-                            className={`px-4 py-2 text-sm text-right font-semibold ${
-                              row.totalReturnPercentage !== null && row.totalReturnPercentage >= 0
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {row.totalReturnPercentage !== null
-                              ? `${row.totalReturnPercentage.toFixed(2)}%`
-                              : "—"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              );
-            })}
+            <button
+              onClick={exportCSV}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Export CSV
+            </button>
           </div>
-        );
-      })}
-    </div>
-  );
-})()}
 
-   
- 
+          {/* GROUPED SINGLE TABLE */}
+          <div className="border mt-4 rounded-lg overflow-hidden">
+            <table className="min-w-full">
+              <thead className="bg-blue-900 text-white text-xs font-semibold">
+                <tr>
+                  <th className="px-4 py-2 text-left">#</th>
+                    <th className="px-4 py-2 text-left">Ticker</th>
+                    <th className="px-4 py-2 text-left">Name</th>
+                  <th className="px-4 py-2 text-left">Sector</th>
+                  <th className="px-4 py-2 text-left">Industry</th>
+                
+                  
+                  <th className="px-4 py-2 text-right">Price</th>
+                  <th className="px-4 py-2 text-right">%</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {groupedAndSorted.map((row, idx) => {
+                  const isFirstRowOfSector =
+                    idx === 0 || groupedAndSorted[idx - 1].sector !== row.sector;
+
+                  return (
+                    <tr
+                      key={row.row}
+                      className="border-t hover:bg-gray-50"
+                    >
+                      <td className="px-4 py-2">{idx + 1}</td>
+                      <td className="px-4 py-2 font-medium">{row.symbol}</td>
+                      <td className="px-4 py-2">{row.security}</td>
+
+                      {/* Only bold the first row of each sector */}
+                      <td className={`px-4 py-2 font-medium ${isFirstRowOfSector ? "text-blue-700" : ""}`}>
+                        {row.sector}
+                      </td>
+
+                      <td className="px-4 py-2">{row.industry}</td>
+                      
+                      
+                      <td className="px-4 py-2 text-right">{row.price}</td>
+
+                      <td
+                        className={`px-4 py-2 text-right font-semibold ${
+                          row.totalReturnPercentage!=null && row.totalReturnPercentage >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {row.totalReturnPercentage !== null
+                          ? `${row.totalReturnPercentage.toFixed(2)}%`
+                          : "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
