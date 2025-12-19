@@ -111,29 +111,44 @@ const PerformanceReturn = () => {
   };
 
   // EXPORT FUNCTIONS
-const exportCSV = () => {
-  if (!tickerData.length) return;
+  const escapeCSVField = (field: any): string => {
+    if (field === null || field === undefined) {
+      return "";
+    }
+    const str = String(field);
+    // If field contains comma, quote, or newline, wrap it in quotes and escape internal quotes
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
 
-  const headers = ["Row", "Ticker", "Name", "Sector", "Industry", "Price", "Return%"];
-  const rows = tickerData.map((d, idx) => [
-    idx + 1,
-    d.symbol,
-    d.security,
-    d.sector,
-    d.industry,
-    d.price ?? "",
-    d.totalReturnPercentage ?? ""
-  ]);
+  const exportCSV = () => {
+    if (!tickerData.length) return;
 
-  let csvContent =
-    "data:text/csv;charset=utf-8," +
-    [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const headers = ["Row", "Ticker", "Name", "Sector", "Industry", "Price", "Return%"];
+    const rows = tickerData.map((d, idx) => [
+      idx + 1,
+      d.symbol,
+      d.security,
+      d.sector,
+      d.industry,
+      d.price ?? "",
+      d.totalReturnPercentage ?? ""
+    ]);
 
-  const link = document.createElement("a");
-  link.href = encodeURI(csvContent);
-  link.download = `heatmap_${selectedIndex}_${selectedPeriod}.csv`;
-  link.click();
-};
+    const csvRows = [
+      headers.map(escapeCSVField).join(","),
+      ...rows.map(row => row.map(escapeCSVField).join(","))
+    ];
+
+    let csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
+
+    const link = document.createElement("a");
+    link.href = encodeURI(csvContent);
+    link.download = `heatmap_${selectedIndex}_${selectedPeriod}.csv`;
+    link.click();
+  };
 
 
 const groupedAndSorted = [...tickerData].sort((a, b) => {
